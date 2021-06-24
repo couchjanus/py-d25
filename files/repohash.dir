@@ -1,0 +1,7 @@
+'foo.txt', (0, 42)
+'some.txt', (512, 42)
+'LICENSE', (1024, 42)
+'hello.txt', (1536, 42)
+'users.csv', (2048, 42)
+'messenges.txt', (2560, 42)
+'messenger.test.py', (3072, 42)
