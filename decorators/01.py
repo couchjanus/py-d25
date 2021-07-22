@@ -1,13 +1,14 @@
 # Функции — это объекты первого уровня
 # Функцию можно динамически создавать, передавать в функцию и изменять. 
 
-def moo(string):
+def moo(string, c = 123):
     lowercase = string.lower()
     return lowercase
 
 moo.yloo = 'You Live Only Once'
 print(moo.yloo)
-
+# moo.c = 2222
+# print(moo.c)
 # можно присвоить переменной функцию, так же как обычные значения этой переменной.
 
 foo = moo
