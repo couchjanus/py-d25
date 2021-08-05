@@ -1,43 +1,38 @@
-import os
+import os, os.path
 import cherrypy
-import string
-import random
 
-HTTP_ROOT = os.path.abspath(os.path.dirname(__file__))
-glob = os.path.join(HTTP_ROOT,'global.conf')
+from jinja2 import Environment, FileSystemLoader
 
-# Submit this form
+from product import Product
+
+# GET CURRENT DIRECTORY
+ROOT = os.path.abspath(os.path.dirname(__file__))
+glob = os.path.join(ROOT,'global.conf')
+conf = os.path.join(ROOT,'config.conf')
 
 class Server(object):
+    def __init__(self):
+        self.env = Environment(loader=FileSystemLoader('./templates'))
+        self.product = Product()
+
     @cherrypy.expose
     def index(self):
-        return """<html>
-          <head></head>
-          <body>
-            <form method="get" action="generate">
-              <input type="text" value="16" name="length" />
-              <button type="submit">Give it now!</button>
-            </form>
-          </body>
-        </html>"""
-
+        products = self.product.all()
+        # return str(products)
+        
+        template = self.env.get_template('index.html')
+        return template.render(products = products, title='Happy Shoping')
     @cherrypy.expose
-    def gen(self):
-        return ''.join(random.sample(string.hexdigits, 8))
-
-    # указывать длину строки динамически
+    def about(self):
+        template = self.env.get_template('about.html')
+        return template.render(name='World')
     @cherrypy.expose
-    def generate(self, length=16):
-        return ''.join(random.sample(string.hexdigits, int(length)))
-
+    def product(self):
+        template = self.env.get_template('product.html')
+        return template.render(name='World')
 
 if __name__ == '__main__':
     server = Server()
     cherrypy.config.update(glob)
     cherrypy.tree.mount(server, '/', config=glob)
-    cherrypy.quickstart(server)
-
-# форма использует метод GET
-# когда вы нажали кнопку Give it now!, форма отправляется на URL-адрес /generate. 
-# HTML-формы также поддерживают метод POST, в этом случае строка запроса не добавляется к URL-адресу, а отправляется как тело клиентского запроса на сервер. 
-# CherryPy обрабатывает и GET, и POST одинаково, используя параметры обработчика для работы с парами запроса (ключ, значение).
+    cherrypy.quickstart(server, '/', conf)
